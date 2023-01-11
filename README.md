@@ -1,23 +1,23 @@
 
 # terraform-emqx-emqx-azure
-> Deploy emqx or emqx enterprise on azure
+Deploy emqx or emqx enterprise on azure
 
 > **Note**
-> Not support EMQX 5.x currently
-> Not support TLS
 
-
+> Not support EMQX 5.x currently  
+Not support TLS
 
 ## Default configurations
-> EMQX: EMQX Enterprise 4.4.12
-> azure Region: westus
+EMQX: EMQX Enterprise 4.4.12
+azure Region: westus
 
 > **Note**
+
 > Due to ubuntu 20.04 of node installed, you need to use emqx package associated with the corresponding os version.
 
 
 ## Install terraform
-> Please refer to [terraform install doc](https://learn.hashicorp.com/tutorials/terraform/install-cli)
+Please refer to [terraform install doc](https://learn.hashicorp.com/tutorials/terraform/install-cli)
 
 
 ## azure AccessKey Pair
@@ -46,7 +46,8 @@ terraform apply -auto-approve -var="ee_lic=${ee_lic}"
 ```
 
 > **Note**
-You should apply for an emqx license if you want more than 10 quotas when deploying emqx enterprise.
+
+> You should apply for an emqx license if you want more than 10 quotas when deploying emqx enterprise.
 
 
 After applying successfully, it will output the following:
