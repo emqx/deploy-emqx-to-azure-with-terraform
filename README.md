@@ -2,25 +2,24 @@
 # terraform-emqx-emqx-azure
 Deploy emqx or emqx enterprise on azure
 
+## Compatability
+
+|                          | EMQX 4.4.x      | 
+|--------------------------|-----------------|
+| ubuntu 20.04             | ✓               | 
+
 > **Note**
 
 > Not support EMQX 5.x currently  
-Not support TLS
-
-## Default configurations
-EMQX: EMQX Enterprise 4.4.12
-azure Region: westus
-
-> **Note**
-
-> Due to ubuntu 20.04 of node installed, you need to use emqx package associated with the corresponding os version.
+Not support TLS 
 
 
 ## Install terraform
 Please refer to [terraform install doc](https://learn.hashicorp.com/tutorials/terraform/install-cli)
 
 
-## azure AccessKey Pair
+## Config azure credentials
+You could follow this [guide](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/guides/service_principal_client_secret)
 ```bash
 export ARM_SUBSCRIPTION_ID=${ARM_SUBSCRIPTION_ID}
 export ARM_TENANT_ID=${ARM_TENANT_ID}
@@ -33,7 +32,7 @@ export ARM_CLIENT_SECRET=${ARM_CLIENT_SECRET}
 cd services/emqx
 terraform init
 terraform plan
-terraform apply -auto-approve
+terraform apply -auto-approve -var="emqx_lic=${emqx_lic}"
 ```
 
 
