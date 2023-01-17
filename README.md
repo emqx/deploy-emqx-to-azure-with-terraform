@@ -41,7 +41,7 @@ terraform apply -auto-approve -var="emqx_lic=${emqx_lic}"
 cd services/emqx_cluster
 terraform init
 terraform plan
-terraform apply -auto-approve -var="emqx_lic=${emqx_lic}"
+terraform apply -auto-approve
 ```
 
 > **Note**
