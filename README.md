@@ -32,7 +32,7 @@ export ARM_CLIENT_SECRET=${ARM_CLIENT_SECRET}
 cd services/emqx
 terraform init
 terraform plan
-terraform apply -auto-approve -var="emqx_lic=${emqx_lic}"
+terraform apply -auto-approve
 ```
 
 
