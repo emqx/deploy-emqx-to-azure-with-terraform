@@ -1,7 +1,6 @@
 #######################################
 # common
 #######################################
-
 resource "random_id" "name" {
   byte_length = 8
 }
@@ -14,6 +13,7 @@ resource "azurerm_resource_group" "rg" {
     source = "terraform"
   })
 }
+
 
 
 #######################################
