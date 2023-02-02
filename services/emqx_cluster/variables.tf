@@ -133,7 +133,7 @@ variable "emqx_vm_size" {
 variable "emqx_package" {
   description = "(Required) The install package of emqx"
   type = string
-  default = "https://www.emqx.com/en/downloads/enterprise/4.4.14/emqx-ee-4.4.14-otp24.3.4.2-1-ubuntu20.04-amd64.zip"
+  default = ""
 }
 
 variable "emqx_lic" {

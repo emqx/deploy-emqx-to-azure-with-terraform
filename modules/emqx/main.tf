@@ -61,11 +61,10 @@ resource "null_resource" "ssh_connection" {
     destination = "/tmp/init.sh"
   }
 
-  # download emqx
-  provisioner "remote-exec" {
-    inline = [
-      "curl -L --max-redirs -1 -o /tmp/emqx.zip ${var.emqx_package}"
-    ]
+  # copy emqx package
+  provisioner "file" {
+    source = var.emqx_package
+    destination = "/tmp/emqx.zip"
   }
 
   # init system

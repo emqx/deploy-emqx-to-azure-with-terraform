@@ -4,14 +4,14 @@ Deploy emqx or emqx enterprise on azure
 
 ## Compatability
 
-|                          | EMQX 4.4.x      | 
+|                          | EMQX 4.4.x      |
 |--------------------------|-----------------|
-| ubuntu 20.04             | ✓               | 
+| ubuntu 20.04             | ✓               |
 
 > **Note**
 
-> Not support EMQX 5.x currently  
-Not support TLS 
+> Not support EMQX 5.x currently
+Not support TLS
 
 
 ## Install terraform
@@ -32,8 +32,12 @@ export ARM_CLIENT_SECRET=${ARM_CLIENT_SECRET}
 cd services/emqx
 terraform init
 terraform plan
-terraform apply -auto-approve
+terraform apply -auto-approve -var="emqx_package=/path/emqx.zip"
 ```
+
+> **Note**
+
+> emqx_package must is a zip file and doesn't contain other zip file
 
 
 ## Deploy EMQX cluster
@@ -41,10 +45,12 @@ terraform apply -auto-approve
 cd services/emqx_cluster
 terraform init
 terraform plan
-terraform apply -auto-approve
+terraform apply -auto-approve -var="emqx_package=/path/emqx.zip"
 ```
 
 > **Note**
+
+> emqx_package must is a zip file and doesn't contain other zip file
 
 > You should apply for an emqx license if you want more than 10 quotas when deploying emqx enterprise.
 
