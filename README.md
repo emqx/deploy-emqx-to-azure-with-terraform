@@ -46,7 +46,8 @@ terraform apply -auto-approve
 
 > **Note**
 
-> You should apply for an emqx license if you want more than 10 quotas when deploying emqx enterprise.
+> You should apply for an emqx license if you want more than 10 quotas when deploying emqx enterprise.  
+terraform apply -auto-approve -var="emqx_lic=${your_license_content}"
 
 
 After applying successfully, it will output the following:
