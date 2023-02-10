@@ -52,8 +52,8 @@ terraform apply -auto-approve -var="emqx_package=/path/emqx.zip"
 
 > emqx_package must is a zip file and doesn't contain other zip file
 
-> You should apply for an emqx license if you want more than 10 quotas when deploying emqx enterprise.
-terraform apply -auto-approve -var="emqx_package=/path/emqx.zip" -var="emqx_lic=${your_lic_content}"
+> You should apply for an emqx license if you want more than 10 quotas when deploying emqx enterprise.  
+terraform apply -auto-approve -var="emqx_package=/path/emqx.zip" -var="emqx_lic=${your_license_content}"
 
 
 After applying successfully, it will output the following:
