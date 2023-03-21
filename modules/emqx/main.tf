@@ -1,5 +1,6 @@
 locals {
-  public_ip = azurerm_linux_virtual_machine.vm.public_ip_address
+  home       = "/home/azureuser"
+  public_ip  = azurerm_linux_virtual_machine.vm.public_ip_address
   private_ip = azurerm_linux_virtual_machine.vm.private_ip_address
 }
 
@@ -11,17 +12,17 @@ resource "tls_private_key" "ssh" {
 
 # Create virtual machine
 resource "azurerm_linux_virtual_machine" "vm" {
-  name = "${var.namespace}_vm"
-  location            = var.location
-  resource_group_name = var.resource_group_name
-  size                = var.vm_size
+  name                  = "${var.namespace}_vm"
+  location              = var.location
+  resource_group_name   = var.resource_group_name
+  size                  = var.vm_size
   network_interface_ids = [var.nic_ids[0]]
 
   os_disk {
-    name = "${var.namespace}_disk"
+    name                 = "${var.namespace}_disk"
     caching              = "ReadWrite"
     storage_account_type = "StandardSSD_LRS"
-    disk_size_gb = "30"
+    disk_size_gb         = "30"
   }
 
   source_image_reference {
@@ -57,7 +58,9 @@ resource "null_resource" "ssh_connection" {
 
   # create init script
   provisioner "file" {
-    content     = templatefile("${path.module}/scripts/init.sh", { local_ip = local.private_ip, emqx_lic = var.emqx_lic })
+    content = templatefile("${path.module}/scripts/init.sh", { local_ip = local.private_ip,
+      emqx_lic = var.emqx_lic, enable_ssl_two_way = var.enable_ssl_two_way,
+    emqx_ca = var.ca, emqx_cert = var.cert, emqx_key = var.key })
     destination = "/tmp/init.sh"
   }
 
@@ -73,13 +76,14 @@ resource "null_resource" "ssh_connection" {
     inline = [
       "chmod +x /tmp/init.sh",
       "/tmp/init.sh",
+      "sudo mv /tmp/emqx ${local.home}",
     ]
   }
 
   # Note: validate the above variables, you have to start emqx separately
   provisioner "remote-exec" {
     inline = [
-      "sudo /home/azureuser/emqx/bin/emqx start"
+      "sudo ${local.home}/emqx/bin/emqx start"
     ]
   }
 }

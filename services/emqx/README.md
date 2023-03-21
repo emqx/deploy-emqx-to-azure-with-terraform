@@ -11,7 +11,7 @@
 
 | Name | Version |
 |------|---------|
-| <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | 3.38.0 |
+| <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | 3.41.0 |
 | <a name="provider_random"></a> [random](#provider\_random) | 3.3.2 |
 
 ## Modules
@@ -21,6 +21,7 @@
 | <a name="module_emqx"></a> [emqx](#module\_emqx) | ../../modules/emqx | n/a |
 | <a name="module_emqx_network"></a> [emqx\_network](#module\_emqx\_network) | ../../modules/network | n/a |
 | <a name="module_emqx_network_security_group"></a> [emqx\_network\_security\_group](#module\_emqx\_network\_security\_group) | ../../modules/network_security_group | n/a |
+| <a name="module_self_signed_cert"></a> [self\_signed\_cert](#module\_self\_signed\_cert) | ../../modules/self_signed_cert | n/a |
 
 ## Resources
 
@@ -34,19 +35,28 @@
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_additional_tags"></a> [additional\_tags](#input\_additional\_tags) | (Optional) Additional resource tags | `map(string)` | `{}` | no |
+| <a name="input_ca_common_name"></a> [ca\_common\_name](#input\_ca\_common\_name) | (Optional) The common name of the CA certificate | `string` | n/a | yes |
+| <a name="input_common_name"></a> [common\_name](#input\_common\_name) | (Optional) The common name of the certificate | `string` | n/a | yes |
+| <a name="input_early_renewal_hours"></a> [early\_renewal\_hours](#input\_early\_renewal\_hours) | (Optional) The eraly renewal period of the certificate | `number` | `720` | no |
 | <a name="input_emqx_address_space"></a> [emqx\_address\_space](#input\_emqx\_address\_space) | (Required) The address space that is used by the virtual network | `string` | `"10.0.0.0/16"` | no |
 | <a name="input_emqx_lic"></a> [emqx\_lic](#input\_emqx\_lic) | (Optional) the content of the license | `string` | `""` | no |
 | <a name="input_emqx_package"></a> [emqx\_package](#input\_emqx\_package) | (Required) The install package of emqx | `string` | `"https://www.emqx.com/en/downloads/enterprise/4.4.14/emqx-ee-4.4.14-otp24.3.4.2-1-ubuntu20.04-amd64.zip"` | no |
 | <a name="input_emqx_security_rules"></a> [emqx\_security\_rules](#input\_emqx\_security\_rules) | (Required) Ingress of emqx with cidr blocks | `list(any)` | <pre>[<br>  {<br>    "access": "Allow",<br>    "destination_address_prefix": "*",<br>    "destination_port_range": "22",<br>    "direction": "Inbound",<br>    "name": "ssh",<br>    "priority": 100,<br>    "protocol": "Tcp",<br>    "source_address_prefix": "*",<br>    "source_port_range": "*"<br>  },<br>  {<br>    "access": "Allow",<br>    "destination_address_prefix": "*",<br>    "destination_port_range": "1883",<br>    "direction": "Inbound",<br>    "name": "mqtt",<br>    "priority": 101,<br>    "protocol": "Tcp",<br>    "source_address_prefix": "*",<br>    "source_port_range": "*"<br>  },<br>  {<br>    "access": "Allow",<br>    "destination_address_prefix": "*",<br>    "destination_port_range": "8883",<br>    "direction": "Inbound",<br>    "name": "mqtts",<br>    "priority": 102,<br>    "protocol": "Tcp",<br>    "source_address_prefix": "*",<br>    "source_port_range": "*"<br>  },<br>  {<br>    "access": "Allow",<br>    "destination_address_prefix": "*",<br>    "destination_port_range": "8083",<br>    "direction": "Inbound",<br>    "name": "ws",<br>    "priority": 103,<br>    "protocol": "Tcp",<br>    "source_address_prefix": "*",<br>    "source_port_range": "*"<br>  },<br>  {<br>    "access": "Allow",<br>    "destination_address_prefix": "*",<br>    "destination_port_range": "8084",<br>    "direction": "Inbound",<br>    "name": "wss",<br>    "priority": 104,<br>    "protocol": "Tcp",<br>    "source_address_prefix": "*",<br>    "source_port_range": "*"<br>  },<br>  {<br>    "access": "Allow",<br>    "destination_address_prefix": "*",<br>    "destination_port_range": "18083",<br>    "direction": "Inbound",<br>    "name": "dashboard",<br>    "priority": 105,<br>    "protocol": "Tcp",<br>    "source_address_prefix": "*",<br>    "source_port_range": "*"<br>  },<br>  {<br>    "access": "Allow",<br>    "destination_address_prefix": "*",<br>    "destination_port_range": "*",<br>    "direction": "Outbound",<br>    "name": "outgoing",<br>    "priority": 200,<br>    "protocol": "*",<br>    "source_address_prefix": "*",<br>    "source_port_range": "*"<br>  }<br>]</pre> | no |
 | <a name="input_emqx_vm_size"></a> [emqx\_vm\_size](#input\_emqx\_vm\_size) | (Required) The SKU which should be used for this Virtual Machine | `string` | `"Standard_F2s_v2"` | no |
+| <a name="input_enable_ssl_two_way"></a> [enable\_ssl\_two\_way](#input\_enable\_ssl\_two\_way) | (Required) Enable SSL two way or not | `bool` | n/a | yes |
 | <a name="input_location"></a> [location](#input\_location) | (Required) The Azure Region where the Resource Group should exist | `string` | `"westus"` | no |
 | <a name="input_namespace"></a> [namespace](#input\_namespace) | (Required) The prefix of these resources | `string` | `"emqx"` | no |
+| <a name="input_org"></a> [org](#input\_org) | (Optional) The organization of the certificate | `string` | n/a | yes |
 | <a name="input_subnet_conf"></a> [subnet\_conf](#input\_subnet\_conf) | (Required) The netnum of subnet of emqx and lb | `map(number)` | <pre>{<br>  "emq": 1<br>}</pre> | no |
+| <a name="input_validity_period_hours"></a> [validity\_period\_hours](#input\_validity\_period\_hours) | (Required) The validity period of the certificate | `number` | `8760` | no |
 
 ## Outputs
 
 | Name | Description |
 |------|-------------|
 | <a name="output_emqx_public_ip"></a> [emqx\_public\_ip](#output\_emqx\_public\_ip) | the public ip of emqx |
-| <a name="output_tls_private_key"></a> [tls\_private\_key](#output\_tls\_private\_key) | the private key of emqx vm |
+| <a name="output_ssh_key"></a> [ssh\_key](#output\_ssh\_key) | the ssh key of vm |
+| <a name="output_tls_ca"></a> [tls\_ca](#output\_tls\_ca) | The ca for self signed certificate |
+| <a name="output_tls_cert"></a> [tls\_cert](#output\_tls\_cert) | The cert for self signed certificate |
+| <a name="output_tls_key"></a> [tls\_key](#output\_tls\_key) | The key for self signed certificate |
 <!-- END_TF_DOCS -->

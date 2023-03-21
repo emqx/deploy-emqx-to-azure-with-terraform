@@ -1,5 +1,6 @@
 locals {
-  public_ips = azurerm_linux_virtual_machine.vm[*].public_ip_address
+  home        = "/home/azureuser"
+  public_ips  = azurerm_linux_virtual_machine.vm[*].public_ip_address
   private_ips = azurerm_linux_virtual_machine.vm[*].private_ip_address
 
   emqx_anchor     = element(local.private_ips, 0)
@@ -17,17 +18,17 @@ resource "tls_private_key" "ssh" {
 resource "azurerm_linux_virtual_machine" "vm" {
   count = var.vm_count
 
-  name = "${var.namespace}_vm_${count.index}"
-  location            = var.location
-  resource_group_name = var.resource_group_name
-  size                = var.vm_size
+  name                  = "${var.namespace}_vm_${count.index}"
+  location              = var.location
+  resource_group_name   = var.resource_group_name
+  size                  = var.vm_size
   network_interface_ids = [var.nic_ids[count.index]]
 
   os_disk {
-    name = "${var.namespace}_disk_${count.index}"
+    name                 = "${var.namespace}_disk_${count.index}"
     caching              = "ReadWrite"
     storage_account_type = "StandardSSD_LRS"
-    disk_size_gb = "30"
+    disk_size_gb         = "30"
   }
 
   source_image_reference {
@@ -64,7 +65,9 @@ resource "null_resource" "ssh_connection" {
 
   # create init script
   provisioner "file" {
-    content     = templatefile("${path.module}/scripts/init.sh", { local_ip = local.private_ips[count.index], emqx_lic = var.emqx_lic })
+    content = templatefile("${path.module}/scripts/init.sh", { local_ip = local.private_ips[count.index],
+      emqx_lic = var.emqx_lic, enable_ssl_two_way = var.enable_ssl_two_way,
+    emqx_ca = var.ca, emqx_cert = var.cert, emqx_key = var.key })
     destination = "/tmp/init.sh"
   }
 
@@ -80,13 +83,14 @@ resource "null_resource" "ssh_connection" {
     inline = [
       "chmod +x /tmp/init.sh",
       "/tmp/init.sh",
+      "sudo mv /tmp/emqx ${local.home}",
     ]
   }
 
   # Note: validate the above variables, you have to start emqx separately
   provisioner "remote-exec" {
     inline = [
-      "sudo /home/azureuser/emqx/bin/emqx start"
+      "sudo ${local.home}/emqx/bin/emqx start"
     ]
   }
 }

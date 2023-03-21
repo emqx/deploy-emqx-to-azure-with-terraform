@@ -68,9 +68,9 @@ resource "azurerm_lb_probe" "azlb" {
 }
 
 resource "azurerm_lb_backend_address_pool_address" "azlb" {
-  count = length(var.emqx_private_ips)
-  name                                = "emqx_vm_${count.index}"
-  backend_address_pool_id             = resource.azurerm_lb_backend_address_pool.azlb.id
+  count                   = length(var.emqx_private_ips)
+  name                    = "emqx_vm_${count.index}"
+  backend_address_pool_id = resource.azurerm_lb_backend_address_pool.azlb.id
   virtual_network_id      = var.vnet_id
   ip_address              = var.emqx_private_ips[count.index]
 }
@@ -84,7 +84,7 @@ resource "azurerm_lb_rule" "azlb" {
   backend_port                   = element(var.lb_port[element(keys(var.lb_port), count.index)], 2)
   frontend_ip_configuration_name = var.frontend_name
   enable_floating_ip             = false
-  disable_outbound_snat = true
+  disable_outbound_snat          = true
   backend_address_pool_ids       = [azurerm_lb_backend_address_pool.azlb.id]
   idle_timeout_in_minutes        = 5
   probe_id                       = element(azurerm_lb_probe.azlb.*.id, count.index)

@@ -53,8 +53,8 @@ variable "allocation_method" {
 
 variable "additional_tags" {
   description = "(Optional) A mapping of additional tags to assign to the resource."
-  type = map(string)
-  default = {}
+  type        = map(string)
+  default     = {}
 }
 
 variable "type" {
@@ -112,11 +112,11 @@ variable "pip_name" {
 }
 
 variable "vnet_id" {
-  description ="(Required) The id of virtual network"
-  type = string
+  description = "(Required) The id of virtual network"
+  type        = string
 }
 
 variable "emqx_private_ips" {
-  description ="(Required) The private ip list of emqx"
-  type = list(string)
+  description = "(Required) The private ip list of emqx"
+  type        = list(string)
 }

@@ -45,5 +45,5 @@ output "azurerm_lb_backend_address_pool_id" {
 
 output "azurerm_lb_private_ip_address" {
   description = "the ip address for the load balancer resource"
-  value = azurerm_lb.azlb.frontend_ip_configuration[*].private_ip_address
+  value       = azurerm_lb.azlb.frontend_ip_configuration[*].private_ip_address
 }
