@@ -15,7 +15,7 @@ variable "additional_tags" {
 }
 
 variable "nic_ids" {
-  type = list
+  type = list(any)
 }
 
 variable "vm_size" {
@@ -28,4 +28,20 @@ variable "emqx_package" {
 
 variable "emqx_lic" {
   type = string
+}
+
+variable "key" {
+  type = string
+}
+
+variable "cert" {
+  type = string
+}
+
+variable "ca" {
+  type = string
+}
+
+variable "enable_ssl_two_way" {
+  type = bool
 }

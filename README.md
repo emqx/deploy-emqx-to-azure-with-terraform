@@ -62,7 +62,41 @@ You can access different services with related ports
 ```bash
 Dashboard: ${loadbalancer_public_ip}:18083
 MQTT: ${loadbalancer_public_ip}:1883
+MQTTS: ${loadbalancer_public_ip}:8883
+WS: ${loadbalancer_public_ip}:8083
+WSS: ${loadbalancer_public_ip}:8084
 ```
+
+## Enable SSL/TLS
+Some configurations for it
+
+```bash
+# default one-way SSL
+enable_ssl_two_way = false
+# common name for root ca
+ca_common_name = "RootCA"
+# common name for cert
+common_name    = "Server"
+# organization name
+org = "EMQ"
+# hours that the cert will valid for
+validity_period_hours = 8760
+# hours before its actual expiry time
+early_renewal_hours = 720
+```
+
+Stores ca, cert and key to files for client connection
+
+``` bash
+terraform output -raw tls_ca > tls_ca.pem
+terraform output -raw tls_cert > tls_cert.pem
+terraform output -raw tls_key > tls_key.key
+```
+
+If a client need to verify server's certificate chain and host name, you have to config the hosts file
+
+``` bash
+${loadbalancer_ip} ${common_name}
 
 ## Destroy
 ```bash
