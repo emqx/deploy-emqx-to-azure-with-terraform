@@ -95,8 +95,10 @@ If a client need to verify server's certificate chain and host name, you have to
 
 ``` bash
 ${loadbalancer_ip} ${common_name}
+```
 
 ## Destroy
+
 ```bash
 terraform destroy -auto-approve
 ```
