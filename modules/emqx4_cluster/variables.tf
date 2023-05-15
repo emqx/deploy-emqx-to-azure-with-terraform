@@ -49,3 +49,7 @@ variable "ca" {
 variable "enable_ssl_two_way" {
   type = bool
 }
+
+variable "cookie" {
+  type = string
+}

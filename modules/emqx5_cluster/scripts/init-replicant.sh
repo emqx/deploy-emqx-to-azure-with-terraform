@@ -46,25 +46,17 @@ sudo sysctl -w net.netfilter.nf_conntrack_tcp_timeout_time_wait=30
 sudo sysctl -w net.ipv4.tcp_max_tw_buckets=1048576
 sudo sysctl -w net.ipv4.tcp_fin_timeout=15
 
-
 # install emqx
-sudo unzip /tmp/emqx.zip -d $BASE_DIR
+sudo mkdir -p $BASE_DIR/emqx
+sudo tar -xzf /tmp/emqx.tar.gz -C $BASE_DIR/emqx
 sudo chown -R azureuser:azureuser $BASE_DIR/emqx
-sudo rm /tmp/emqx.zip
+sudo rm /tmp/emqx.tar.gz
 
-sudo sed -i 's/sysmon.large_heap = 8MB/sysmon.large_heap = 64MB/g' $BASE_DIR/emqx/etc/sys_mon.conf
-# emqx config
-sudo sed -i 's/## node.process_limit = 2097152/node.process_limit = 2097152/g' $BASE_DIR/emqx/etc/emqx.conf
-sudo sed -i 's/## node.max_ports = 1048576/node.max_ports = 1048576/g' $BASE_DIR/emqx/etc/emqx.conf
-sudo sed -i 's/node.name = emqx@127.0.0.1/node.name = emqx@${local_ip}/g' $BASE_DIR/emqx/etc/emqx.conf
-# listener config
-sudo sed -i 's/listener.tcp.external.acceptors = 8/listener.tcp.external.acceptors = 64/g' $BASE_DIR/emqx/etc/listeners.conf
-sudo sed -i 's/listener.tcp.external.max_conn_rate = 1000/listener.tcp.external.max_conn_rate = 10000/g' $BASE_DIR/emqx/etc/listeners.conf
-sudo sed -i 's/listener.ssl.external.keyfile = etc\/certs\/key.pem/listener.ssl.external.keyfile = etc\/certs\/emqx.key/g' $BASE_DIR/emqx/etc/listeners.conf
-sudo sed -i 's/listener.ssl.external.certfile = etc\/certs\/cert.pem/listener.ssl.external.certfile = etc\/certs\/emqx.pem/g' $BASE_DIR/emqx/etc/listeners.conf
-sudo sed -i 's/listener.ssl.external.cacertfile = etc\/certs\/cacert.pem/listener.ssl.external.cacertfile = etc\/certs\/emqx_ca.pem/g' $BASE_DIR/emqx/etc/listeners.conf
-sudo sed -i 's/## listener.ssl.external.gc_after_handshake = false/listener.ssl.external.gc_after_handshake = true/g' $BASE_DIR/emqx/etc/listeners.conf
-sudo sed -i 's/## listener.ssl.external.hibernate_after = 5s/listener.ssl.external.hibernate_after = 5s/g' $BASE_DIR/emqx/etc/listeners.conf
+sudo sed -i '/^ *node {/,/^ *} *$/c\node {\n  name = "emqx@${local_ip}"\n  cookie = "${cookie}"\n  data_dir = "data"\n  role  = replicant\n}' $BASE_DIR/emqx/etc/emqx.conf
+sudo sed -i 's|keyfile = "etc/certs/key.pem"|keyfile = "etc/certs/emqx.key"|g' $BASE_DIR/emqx/etc/emqx.conf
+sudo sed -i 's|certfile = "etc/certs/cert.pem"|certfile = "etc/certs/emqx.pem"|g' $BASE_DIR/emqx/etc/emqx.conf
+sudo sed -i 's|cacertfile = "etc\/certs\/cacert.pem"|cacertfile = "etc/certs/emqx_ca.pem"|g' $BASE_DIR/emqx/etc/emqx.conf
+sudo sed -i '/^ *cluster {/,/^ *} *$/c\cluster {\n  name = emqxcl\n  discovery_strategy = static\n  core_nodes = ${core_nodes}\n  static {\n    seeds = ${all_nodes}\n  }\n}' $BASE_DIR/emqx/etc/emqx.conf
 
 # if enable two way ssl
 if [ $enable_ssl_two_way = true ]; then

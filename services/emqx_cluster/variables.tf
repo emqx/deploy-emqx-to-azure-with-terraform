@@ -130,12 +130,6 @@ variable "emqx_vm_size" {
   default     = "Standard_F2s_v2"
 }
 
-variable "emqx_package" {
-  description = "(Required) The install package of emqx"
-  type        = string
-  default     = "https://www.emqx.com/en/downloads/enterprise/4.4.14/emqx-ee-4.4.14-otp24.3.4.2-1-ubuntu20.04-amd64.zip"
-}
-
 variable "emqx_lic" {
   description = "(Optional) the content of the license"
   type        = string
@@ -205,4 +199,34 @@ variable "early_renewal_hours" {
   description = "(Optional) The eraly renewal period of the certificate"
   type        = number
   default     = 720
+}
+
+variable "emqx4_package" {
+  description = "(Required) The install package of emqx4"
+  type        = string
+  default     = ""
+}
+
+variable "emqx5_core_count" {
+  description = "(Required) The count of emqx core node"
+  type        = number
+  default     = 1
+}
+
+variable "emqx5_package" {
+  description = "(Required) The install package of emqx5"
+  type        = string
+  default     = ""
+}
+
+variable "is_emqx5" {
+  description = "(Optional) Is emqx5 or not"
+  type        = bool
+  default     = false
+}
+
+variable "emqx_cookie" {
+  description = "(Optional) The cookie of emqx"
+  type        = string
+  default     = "emqx_secret_cookie"
 }
