@@ -1,23 +1,27 @@
+# Deploy EMQX to Azure with Terraform
 
-# terraform-emqx-emqx-azure
-Deploy emqx or emqx enterprise on azure
+This project provides a Terraform script for deploying either the open-source or enterprise versions of EMQX on Microsoft Azure. EMQX is an open-source, distributed MQTT message broker for IoT applications and is designed to handle large amounts of concurrent client connections.
+
 
 ## Compatability
 
-|                          | EMQX 4.4.x      | 
-|--------------------------|-----------------|
-| ubuntu 20.04             | ✓               | 
-
-> **Note**
-
-> Not support EMQX 5.x currently  
-
-## Install terraform
-Please refer to [terraform install doc](https://learn.hashicorp.com/tutorials/terraform/install-cli)
+|   OS/Version | EMQX Enterprise 4.4.x | EMQX Open Source 4.4.x | EMQX Open Source 5.0.x |
+|--------------|-----------------------|------------------------|------------------------|
+| ubuntu 20.04 | ✓                     | ✓                      | ✓                      |
 
 
-## Config azure credentials
-You could follow this [guide](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/guides/service_principal_client_secret)
+## Prerequisites
+
+- Azure account with necessary permissions
+- Terraform installed on your machine. If not, please follow this [guide](https://learn.hashicorp.com/tutorials/terraform/install-cli)
+- Azure CLI installed and configured
+
+## Configuration
+
+### Azure credentials
+
+Set up your Azure credentials by following this [guide](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/guides/service_principal_client_secret). After setting up, export the Azure credentials:
+
 ```bash
 export ARM_SUBSCRIPTION_ID=${ARM_SUBSCRIPTION_ID}
 export ARM_TENANT_ID=${ARM_TENANT_ID}
@@ -25,16 +29,34 @@ export ARM_CLIENT_ID=${ARM_CLIENT_ID}
 export ARM_CLIENT_SECRET=${ARM_CLIENT_SECRET}
 ```
 
-## Deploy EMQX single node
+### Configuring EMQX4
+
+To deploy EMQX version 4.x, provide the package URL in the emqx4_package variable. Replace ${emqx4_package_url} with your actual URL.
+
 ```bash
-cd services/emqx
-terraform init
-terraform plan
-terraform apply -auto-approve
+emqx4_package = ${emqx4_package_url}
 ```
 
+### Configuring EMQX5
 
-## Deploy EMQX cluster
+```bash
+emqx5_package = ${emqx5_package_url}
+is_emqx5 = true
+emqx5_core_count = 1
+emqx_instance_count = 4
+```
+
+> **Note**
+
+> The emq5_core_count should be less than or equal to emqx_instance_count. 
+
+
+## Deployment
+
+### Deploy EMQX cluster
+
+To deploy an EMQX cluster, run the following commands:
+
 ```bash
 cd services/emqx_cluster
 terraform init
@@ -44,19 +66,23 @@ terraform apply -auto-approve
 
 > **Note**
 
-> You should apply for an emqx license if you want more than 10 quotas when deploying emqx enterprise.  
+> If you want to deploy more than 10 nodes when using EMQX Enterprise, you need to apply for an EMQX license. 
+
+Run the following command to apply the license:
+
+``` bash
 terraform apply -auto-approve -var="emqx_lic=${your_license_content}"
+```
 
-
-After applying successfully, it will output the following:
+After successful deployment, you will see the following output:
 
 ```bash
 Outputs:
 loadbalancer_public_ip = ${loadbalancer_public_ip}
 ```
 
+You can now access various services on their respective ports:
 
-You can access different services with related ports
 ```bash
 Dashboard: ${loadbalancer_public_ip}:18083
 MQTT: ${loadbalancer_public_ip}:1883
@@ -65,8 +91,10 @@ WS: ${loadbalancer_public_ip}:8083
 WSS: ${loadbalancer_public_ip}:8084
 ```
 
-## Enable SSL/TLS
-Some configurations for it
+### Enable SSL/TLS
+
+Below are some configurations for enabling SSL/TLS:
+
 
 ```bash
 # default one-way SSL
@@ -83,7 +111,8 @@ validity_period_hours = 8760
 early_renewal_hours = 720
 ```
 
-Stores ca, cert and key to files for client connection
+Run the following commands to store the CA, cert, and key to files for client connections:
+
 
 ``` bash
 terraform output -raw tls_ca > tls_ca.pem
@@ -91,15 +120,33 @@ terraform output -raw tls_cert > tls_cert.pem
 terraform output -raw tls_key > tls_key.key
 ```
 
-If a client need to verify server's certificate chain and host name, you have to config the hosts file
+If a client needs to verify the server's certificate chain and host name, you must configure the hosts file:
 
 ``` bash
 ${loadbalancer_ip} ${common_name}
 ```
 
-## Destroy
+### Cleanup
+
+After you've finished with the EMQX cluster, you can destroy it using the following command:
+
 
 ```bash
 terraform destroy -auto-approve
 ```
+
+This will delete all resources created by Terraform in this module.
+
+## Contribution
+
+We welcome contributions from the community. Please submit your pull requests for bug fixes, improvements, and new features.
+
+## License
+
+This project is licensed under the terms of the [MIT License](https://github.com/emqx/deploy-emqx-to-azure-with-terraform/blob/main/LICENSE).
+
+## Support
+
+If you encounter any problems or have any questions about this module, please open an issue in the GitHub repository.
+
 

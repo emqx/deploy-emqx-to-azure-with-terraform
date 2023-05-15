@@ -18,6 +18,14 @@ variable "nic_ids" {
   type = list(any)
 }
 
+variable "vm_count" {
+  type = number
+}
+
+variable "core_count" {
+  type = number
+}
+
 variable "vm_size" {
   type = string
 }
@@ -44,4 +52,8 @@ variable "ca" {
 
 variable "enable_ssl_two_way" {
   type = bool
+}
+
+variable "cookie" {
+  type = string
 }

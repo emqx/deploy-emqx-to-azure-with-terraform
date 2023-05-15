@@ -1,11 +1,16 @@
 locals {
   home        = "/home/azureuser"
+  replicant_count  = var.vm_count - var.core_count
   public_ips  = azurerm_linux_virtual_machine.vm[*].public_ip_address
   private_ips = azurerm_linux_virtual_machine.vm[*].private_ip_address
+  private_ips_json = jsonencode([for ip in local.private_ips : format("emqx@%s", ip)])
 
-  emqx_anchor     = element(local.private_ips, 0)
-  emqx_rest       = slice(local.public_ips, 1, var.vm_count)
-  emqx_rest_count = var.vm_count - 1
+  public_core_ips       = slice(local.public_ips, 0, var.core_count)
+  private_core_ips      = slice(local.private_ips, 0, var.core_count)
+  private_core_ips_json = jsonencode([for ip in local.private_core_ips : format("emqx@%s", ip)])
+
+  public_replicant_ips  = slice(local.public_ips, var.core_count, var.vm_count)
+  private_replicant_ips = slice(local.private_ips, var.core_count, var.vm_count)
 }
 
 # Create (and display) an SSH key
@@ -52,29 +57,29 @@ resource "azurerm_linux_virtual_machine" "vm" {
   })
 }
 
-resource "null_resource" "ssh_connection" {
+resource "null_resource" "emqx_core" {
   depends_on = [azurerm_linux_virtual_machine.vm]
 
-  count = var.vm_count
+  count = var.core_count
   connection {
     type        = "ssh"
-    host        = local.public_ips[count.index]
+    host        = local.public_core_ips[count.index]
     user        = "azureuser"
     private_key = tls_private_key.ssh.private_key_pem
   }
 
   # create init script
   provisioner "file" {
-    content = templatefile("${path.module}/scripts/init.sh", { local_ip = local.private_ips[count.index],
-      emqx_lic = var.emqx_lic, enable_ssl_two_way = var.enable_ssl_two_way,
-    emqx_ca = var.ca, emqx_cert = var.cert, emqx_key = var.key })
+    content = templatefile("${path.module}/scripts/init-core.sh", { local_ip = local.private_core_ips[count.index],
+      emqx_lic = var.emqx_lic, enable_ssl_two_way = var.enable_ssl_two_way, emqx_ca = var.ca, emqx_cert = var.cert,
+    emqx_key = var.key, cookie = var.cookie, core_nodes = local.private_core_ips_json, all_nodes = local.private_ips_json })
     destination = "/tmp/init.sh"
   }
 
   # download emqx
   provisioner "remote-exec" {
     inline = [
-      "curl -L --max-redirs -1 -o /tmp/emqx.zip ${var.emqx_package}"
+      "curl -L --max-redirs -1 -o /tmp/emqx.tar.gz ${var.emqx_package}"
     ]
   }
 
@@ -95,21 +100,45 @@ resource "null_resource" "ssh_connection" {
   }
 }
 
-resource "null_resource" "emqx_cluster" {
-  depends_on = [null_resource.ssh_connection]
+resource "null_resource" "emqx_replicant" {
+  depends_on = [null_resource.emqx_core]
 
-  count = local.emqx_rest_count
-
+  count = local.replicant_count
   connection {
     type        = "ssh"
-    host        = local.emqx_rest[count.index % local.emqx_rest_count]
+    host        = local.public_replicant_ips[count.index]
     user        = "azureuser"
     private_key = tls_private_key.ssh.private_key_pem
   }
 
+  # create init script
+  provisioner "file" {
+    content = templatefile("${path.module}/scripts/init-replicant.sh", { local_ip = local.private_replicant_ips[count.index],
+      emqx_lic = var.emqx_lic, enable_ssl_two_way = var.enable_ssl_two_way, emqx_ca = var.ca, emqx_cert = var.cert,
+    emqx_key = var.key, cookie = var.cookie, core_nodes = local.private_core_ips_json, all_nodes = local.private_ips_json })
+    destination = "/tmp/init.sh"
+  }
+
+  # download emqx
   provisioner "remote-exec" {
     inline = [
-      "/home/azureuser/emqx/bin/emqx_ctl cluster join emqx@${local.emqx_anchor}"
+      "curl -L --max-redirs -1 -o /tmp/emqx.tar.gz ${var.emqx_package}"
+    ]
+  }
+
+  # init system
+  provisioner "remote-exec" {
+    inline = [
+      "chmod +x /tmp/init.sh",
+      "/tmp/init.sh",
+      "sudo mv /tmp/emqx ${local.home}",
+    ]
+  }
+
+  # Note: validate the above variables, you have to start emqx separately
+  provisioner "remote-exec" {
+    inline = [
+      "sudo ${local.home}/emqx/bin/emqx start"
     ]
   }
 }
