@@ -13,7 +13,7 @@ This project provides a Terraform script for deploying either the open-source or
 ## Prerequisites
 
 - Azure account with necessary permissions
-- Terraform installed on your machine. If not, please follow this [guide](https://learn.hashicorp.com/tutorials/terraform/install-cli)
+- Terraform installed on your machine. If not, please follow this [guide](https://developer.hashicorp.com/terraform/tutorials/azure-get-started/install-cli)
 - Azure CLI installed and configured
 
 ## Configuration
