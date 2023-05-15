@@ -31,7 +31,7 @@ export ARM_CLIENT_SECRET=${ARM_CLIENT_SECRET}
 
 ### Configuring EMQX4
 
-To deploy EMQX version 4.x, provide the package URL in the emqx4_package variable. Replace ${emqx4_package_url} with your actual URL.
+To deploy EMQX version 4.4.x, provide the package URL in the emqx4_package variable. Replace ${emqx4_package_url} with your actual URL.
 
 ```bash
 emqx4_package = ${emqx4_package_url}
@@ -39,16 +39,18 @@ emqx4_package = ${emqx4_package_url}
 
 ### Configuring EMQX5
 
+To deploy EMQX version 5.0.x, provide the package URL in the emqx5_package variable. Replace ${emqx5_package_url} with your actual URL.
+
 ```bash
 emqx5_package = ${emqx5_package_url}
 is_emqx5 = true
 emqx5_core_count = 1
-emqx_instance_count = 4
+emqx_vm_count = 4
 ```
 
 > **Note**
 
-> The emq5_core_count should be less than or equal to emqx_instance_count. 
+> The emq5_core_count should be less than or equal to emqx_vm_count. 
 
 
 ## Deployment
