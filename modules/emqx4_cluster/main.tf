@@ -6,6 +6,14 @@ locals {
   private_ips_string = join(",", [for ip in local.private_ips : format("emqx@%s", ip)])
 }
 
+resource "azurerm_availability_set" "az_set" {
+  name                = "${var.namespace}_availability-set"
+  location            = var.location
+  resource_group_name = var.resource_group_name
+  # platform_fault_domain_count = data.azurerm_available_service.az.platform_fault_domain_count
+  # platform_update_domain_count = data.azurerm_available_service.az.platform_update_domain_count
+}
+
 # Create (and display) an SSH key
 resource "tls_private_key" "ssh" {
   algorithm = "RSA"
@@ -21,6 +29,9 @@ resource "azurerm_linux_virtual_machine" "vm" {
   resource_group_name   = var.resource_group_name
   size                  = var.vm_size
   network_interface_ids = [var.nic_ids[count.index]]
+
+  availability_set_id = azurerm_availability_set.az_set.id
+  # zone   = element(["1", "2", "3"], count.index % 3)
 
   os_disk {
     name                 = "${var.namespace}_disk_${count.index}"
@@ -65,7 +76,7 @@ resource "null_resource" "emqx" {
   provisioner "file" {
     content = templatefile("${path.module}/scripts/init.sh", { local_ip = local.private_ips[count.index],
       emqx_lic = var.emqx_lic, enable_ssl_two_way = var.enable_ssl_two_way, emqx_ca = var.ca,
-      emqx_cert = var.cert, emqx_key = var.key, cookie = var.cookie, all_nodes = local.private_ips_string })
+    emqx_cert = var.cert, emqx_key = var.key, cookie = var.cookie, all_nodes = local.private_ips_string })
     destination = "/tmp/init.sh"
   }
 

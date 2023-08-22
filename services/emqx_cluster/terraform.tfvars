@@ -1,6 +1,8 @@
 ## common
 
-location        = "westus"
+# Azure regions with availability zone support
+# https://learn.microsoft.com/en-us/azure/reliability/availability-zones-service-support#azure-regions-with-availability-zone-support
+location        = "eastus2"
 namespace       = "emqx"
 additional_tags = {}
 
@@ -29,9 +31,9 @@ early_renewal_hours   = 720
 
 
 ## special to emqx 4
-emqx4_package = "https://www.emqx.com/en/downloads/enterprise/4.4.16/emqx-ee-4.4.16-otp24.3.4.2-1-ubuntu20.04-amd64.zip"
+emqx4_package = "https://www.emqx.com/en/downloads/enterprise/4.4.20/emqx-ee-4.4.20-otp24.3.4.2-1-ubuntu20.04-amd64.zip"
 
 ## special to emqx 5
 # is_emqx5         = true
-# emqx5_core_count = 1
-# emqx5_package    = "https://www.emqx.com/en/downloads/broker/5.0.24/emqx-5.0.24-ubuntu20.04-amd64.tar.gz"
+# emqx5_core_count = 2
+# emqx5_package = "https://www.emqx.com/en/downloads/enterprise/5.1.1/emqx-enterprise-5.1.1-ubuntu20.04-amd64.tar.gz"

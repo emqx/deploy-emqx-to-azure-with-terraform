@@ -74,7 +74,7 @@ module "emqx4_cluster" {
   emqx_package        = var.emqx4_package
   emqx_lic            = var.emqx_lic
   additional_tags     = var.additional_tags
-  cookie         = var.emqx_cookie
+  cookie              = var.emqx_cookie
 
   # SSL/TLS
   enable_ssl_two_way = var.enable_ssl_two_way
@@ -93,12 +93,12 @@ module "emqx5_cluster" {
   resource_group_name = azurerm_resource_group.rg.name
   nic_ids             = module.emqx_network.nic_ids
   vm_count            = var.emqx_vm_count
-  core_count     = var.emqx5_core_count
+  core_count          = var.emqx5_core_count
   vm_size             = var.emqx_vm_size
   emqx_package        = var.emqx5_package
   emqx_lic            = var.emqx_lic
   additional_tags     = var.additional_tags
-  cookie         = var.emqx_cookie
+  cookie              = var.emqx_cookie
 
   # SSL/TLS
   enable_ssl_two_way = var.enable_ssl_two_way

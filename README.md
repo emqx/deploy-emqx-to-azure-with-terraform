@@ -5,9 +5,9 @@ This project provides a Terraform script for deploying either the open-source or
 
 ## Compatability
 
-|   OS/Version | EMQX Enterprise 4.4.x | EMQX Open Source 4.4.x | EMQX Open Source 5.0.x |
-|--------------|-----------------------|------------------------|------------------------|
-| ubuntu 20.04 | ✓                     | ✓                      | ✓                      |
+| OS/Version   | EMQX Enterprise 4.4.x | EMQX Open Source 4.4.x | EMQX Open Source 5.1.x | EMQX enterprise Source 5.1.x |
+|--------------|-----------------------|------------------------|------------------------|------------------------------|
+| ubuntu 20.04 | ✓                     | ✓                      | ✓                      | ✓                            |
 
 
 ## Prerequisites
@@ -39,13 +39,13 @@ emqx4_package = ${emqx4_package_url}
 
 ### Configuring EMQX5
 
-To deploy EMQX version 5.0.x, provide the package URL in the emqx5_package variable. Replace ${emqx5_package_url} with your actual URL.
+To deploy EMQX version 5.1.x, provide the package URL in the emqx5_package variable. Replace ${emqx5_package_url} with your actual URL.
 
 ```bash
 emqx5_package = ${emqx5_package_url}
 is_emqx5 = true
-emqx5_core_count = 1
-emqx_vm_count = 4
+emqx5_core_count = 2
+emqx_vm_count = 3
 ```
 
 > **Note**

@@ -1,8 +1,8 @@
 locals {
-  home        = "/home/azureuser"
+  home             = "/home/azureuser"
   replicant_count  = var.vm_count - var.core_count
-  public_ips  = azurerm_linux_virtual_machine.vm[*].public_ip_address
-  private_ips = azurerm_linux_virtual_machine.vm[*].private_ip_address
+  public_ips       = azurerm_linux_virtual_machine.vm[*].public_ip_address
+  private_ips      = azurerm_linux_virtual_machine.vm[*].private_ip_address
   private_ips_json = jsonencode([for ip in local.private_ips : format("emqx@%s", ip)])
 
   public_core_ips       = slice(local.public_ips, 0, var.core_count)
@@ -11,6 +11,14 @@ locals {
 
   public_replicant_ips  = slice(local.public_ips, var.core_count, var.vm_count)
   private_replicant_ips = slice(local.private_ips, var.core_count, var.vm_count)
+}
+
+resource "azurerm_availability_set" "az_set" {
+  name                = "${var.namespace}_availability-set"
+  location            = var.location
+  resource_group_name = var.resource_group_name
+  # platform_fault_domain_count = data.azurerm_available_service.az.platform_fault_domain_count
+  # platform_update_domain_count = data.azurerm_available_service.az.platform_update_domain_count
 }
 
 # Create (and display) an SSH key
@@ -28,6 +36,8 @@ resource "azurerm_linux_virtual_machine" "vm" {
   resource_group_name   = var.resource_group_name
   size                  = var.vm_size
   network_interface_ids = [var.nic_ids[count.index]]
+
+  availability_set_id = azurerm_availability_set.az_set.id
 
   os_disk {
     name                 = "${var.namespace}_disk_${count.index}"
