@@ -17,8 +17,6 @@ resource "azurerm_availability_set" "az_set" {
   name                = "${var.namespace}_availability-set"
   location            = var.location
   resource_group_name = var.resource_group_name
-  # platform_fault_domain_count = data.azurerm_available_service.az.platform_fault_domain_count
-  # platform_update_domain_count = data.azurerm_available_service.az.platform_update_domain_count
 }
 
 # Create (and display) an SSH key

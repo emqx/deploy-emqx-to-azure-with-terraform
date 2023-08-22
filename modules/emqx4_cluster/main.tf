@@ -10,8 +10,6 @@ resource "azurerm_availability_set" "az_set" {
   name                = "${var.namespace}_availability-set"
   location            = var.location
   resource_group_name = var.resource_group_name
-  # platform_fault_domain_count = data.azurerm_available_service.az.platform_fault_domain_count
-  # platform_update_domain_count = data.azurerm_available_service.az.platform_update_domain_count
 }
 
 # Create (and display) an SSH key
@@ -31,7 +29,6 @@ resource "azurerm_linux_virtual_machine" "vm" {
   network_interface_ids = [var.nic_ids[count.index]]
 
   availability_set_id = azurerm_availability_set.az_set.id
-  # zone   = element(["1", "2", "3"], count.index % 3)
 
   os_disk {
     name                 = "${var.namespace}_disk_${count.index}"
