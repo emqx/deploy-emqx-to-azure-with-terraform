@@ -7,9 +7,7 @@
 .DS_Store
 
 # Terraform
-.terraform
-terraform.tfstate
-.terraform.lock.hcl
-terraform.tfstate.backup
-
-
+services/emqx_cluster/.terraform
+services/emqx_cluster/terraform.tfstate
+services/emqx_cluster/.terraform.lock.hcl
+services/emqx_cluster/terraform.tfstate.backup

@@ -1,14 +1,59 @@
+locals {
+  package_url = var.is_emqx5 ? var.emqx5_package : var.emqx4_package
+}
+
+#######################################
+# check package
+#######################################
+
+resource "null_resource" "check_url" {
+  triggers = {
+    package = local.package_url
+  }
+
+  # Execute a local script
+  provisioner "local-exec" {
+    command = <<EOT
+      #!/bin/bash
+      set -e
+
+      # Define the URL to check
+      url="${local.package_url}"
+
+      # Check if the URL ends with tar.gz or zip
+      if [[ "$url" =~ \.(tar\.gz|zip)$ ]]; then
+        echo "URL suffix is valid (tar.gz or zip)."
+
+        # Attempt to download the package
+        if curl -fsS --head "$url" > /dev/null; then
+          echo "Package can be downloaded."
+        else
+          echo "Package download failed."
+          exit 1
+        fi
+      else
+        echo "Invalid URL suffix. URL should end with .tar.gz or .zip."
+        exit 1
+      fi
+    EOT
+  }
+}
+
+
+
 #######################################
 # common
 #######################################
 
 resource "random_id" "name" {
   byte_length = 8
+  depends_on = [null_resource.check_url]
 }
 
 resource "azurerm_resource_group" "rg" {
   location = var.location
   name     = "${var.namespace}_${random_id.name.hex}_resource_group"
+  depends_on = [null_resource.check_url]
 }
 
 #######################################
@@ -23,6 +68,7 @@ module "emqx_network_security_group" {
   resource_group_name = azurerm_resource_group.rg.name
   security_rules      = var.emqx_security_rules
   additional_tags     = var.additional_tags
+  depends_on = [null_resource.check_url]
 }
 
 #######################################
@@ -40,6 +86,7 @@ module "emqx_network" {
   address_space       = var.emqx_address_space
   nsg_id              = module.emqx_network_security_group.nsg_id
   additional_tags     = var.additional_tags
+  depends_on = [null_resource.check_url]
 }
 
 #######################################
@@ -54,6 +101,7 @@ module "self_signed_cert" {
   org                   = var.org
   early_renewal_hours   = var.early_renewal_hours
   validity_period_hours = var.validity_period_hours
+  depends_on = [null_resource.check_url]
 }
 
 #######################################
@@ -81,6 +129,7 @@ module "emqx4_cluster" {
   key                = module.self_signed_cert.key
   cert               = module.self_signed_cert.cert
   ca                 = module.self_signed_cert.ca
+  depends_on = [null_resource.check_url]
 }
 
 module "emqx5_cluster" {
@@ -105,6 +154,7 @@ module "emqx5_cluster" {
   key                = module.self_signed_cert.key
   cert               = module.self_signed_cert.cert
   ca                 = module.self_signed_cert.ca
+  depends_on = [null_resource.check_url]
 }
 
 #######################################

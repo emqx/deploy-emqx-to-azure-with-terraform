@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
 BASE_DIR="/tmp"
 LIC="/tmp/emqx/etc/emqx.lic"
