@@ -11,7 +11,8 @@
 
 | Name | Version |
 |------|---------|
-| <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | 3.70.0 |
+| <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | 3.72.0 |
+| <a name="provider_null"></a> [null](#provider\_null) | 3.2.1 |
 | <a name="provider_random"></a> [random](#provider\_random) | 3.3.2 |
 
 ## Modules
@@ -30,6 +31,7 @@
 | Name | Type |
 |------|------|
 | [azurerm_resource_group.rg](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/resource_group) | resource |
+| [null_resource.check_url](https://registry.terraform.io/providers/hashicorp/null/latest/docs/resources/resource) | resource |
 | [random_id.name](https://registry.terraform.io/providers/hashicorp/random/3.3.2/docs/resources/id) | resource |
 
 ## Inputs
@@ -64,8 +66,7 @@
 
 | Name | Description |
 |------|-------------|
-| <a name="output_loadbalancer_private_ip"></a> [loadbalancer\_private\_ip](#output\_loadbalancer\_private\_ip) | The private ip address for loadbalancer resource |
-| <a name="output_loadbalancer_public_ip"></a> [loadbalancer\_public\_ip](#output\_loadbalancer\_public\_ip) | The public ip address for loadbalancer resource |
+| <a name="output_loadbalancer_ip"></a> [loadbalancer\_ip](#output\_loadbalancer\_ip) | The ip address for loadbalancer resource |
 | <a name="output_tls_ca"></a> [tls\_ca](#output\_tls\_ca) | The ca for self signed certificate |
 | <a name="output_tls_cert"></a> [tls\_cert](#output\_tls\_cert) | The cert for self signed certificate |
 | <a name="output_tls_key"></a> [tls\_key](#output\_tls\_key) | The key for self signed certificate |

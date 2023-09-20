@@ -93,6 +93,13 @@ WS: ${loadbalancer_public_ip}:8083
 WSS: ${loadbalancer_public_ip}:8084
 ```
 
+### Enable internal load balancer
+
+``` bash
+lb_type = "private"
+```
+
+
 ### Enable SSL/TLS
 
 Below are some configurations for enabling SSL/TLS:
