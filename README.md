@@ -5,7 +5,7 @@ This project provides a Terraform script for deploying either the open-source or
 
 ## Compatability
 
-| OS/Version   | EMQX Enterprise 4.4.x | EMQX Open Source 4.4.x | EMQX Open Source 5.1.x | EMQX enterprise Source 5.1.x |
+| OS/Version   | EMQX Enterprise 4.4.x | EMQX Open Source 4.4.x | EMQX Open Source 5.1.x | EMQX enterprise 5.1.x |
 |--------------|-----------------------|------------------------|------------------------|------------------------------|
 | ubuntu 20.04 | ✓                     | ✓                      | ✓                      | ✓                            |
 
